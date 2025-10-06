@@ -61,6 +61,9 @@ function drawInteraction(faces, hands) {
 
     let noseTipX = face.keypoints[4].x;
     let noseTipY = face.keypoints[4].y;
+
+    let testx = face.keypoints[4].x;
+    let testy = face.keypoints[4].y;
     /*
     Start drawing on the face here
     */
@@ -68,19 +71,42 @@ function drawInteraction(faces, hands) {
     fill(225, 225, 0);
     // fill(get(leftEyeCenterX, leftEyeCenterY))
 
-    ellipse(leftEyeCenterX, leftEyeCenterY, leftEyeWidth, leftEyeHeight);
+    //ellipse(leftEyeCenterX, leftEyeCenterY, leftEyeWidth, leftEyeHeight);
 
-    drawPoints(face.leftEye);
-    drawPoints(face.leftEyebrow);
-    drawPoints(face.lips);
-    drawPoints(face.rightEye);
-    drawPoints(face.rightEyebrow);
+    //drawPoints(face.leftEye);
+    //drawPoints(face.leftEyebrow);
+    //drawPoints(face.lips);
+    //drawPoints(face.rightEye);
+    //drawPoints(face.rightEyebrow);
 
-    // drawX(rightEyeCenterX,rightEyeCenterY);
-    // drawX(leftEyeCenterX,leftEyeCenterY);
+  //drawX(rightEyeCenterX,rightEyeCenterY);
+  //drawX(leftEyeCenterX,leftEyeCenterY);
 
+
+// REyeHeight(face.rightEye.height);
+// LEyeHeight(face.leftEye.height);
+
+  let REyeHeight = face.rightEye.height;
+  let LEyeHeight = face.leftEye.height;
+
+  leftDrawX(face.leftEye.centerX, face.leftEye.centerY, LEyeHeight);
+  rightDrawX(face.rightEye.centerX, face.rightEye.centerY, REyeHeight);
 
     // drawX(noseTipX,noseTipY); 
+
+
+
+
+
+  // checkIfMouthIsOpen(faces)
+  // if (mouthIsOpen){
+  
+  // }
+
+
+
+
+
 
     // drawX(face.keypoints[332].x,face.keypoints[332].y);
     // drawX(face.keypoints[103].x,face.keypoints[103].y);
@@ -95,27 +121,41 @@ function drawInteraction(faces, hands) {
   // You can make addtional elements here, but keep the face drawing inside the for loop. 
 }
 
-function drawX(X, Y) {
-  push()
+function leftDrawX(X, Y, LEyeHeight) {
+ push()
+// console.log("hello");
+ strokeWeight(15)
+ stroke(11);
+fill(255);
+ellipse(X, Y, 100, 60+ (LEyeHeight))
+fill(255,0,0)
+ellipse(X, Y, 50, 50 )
 
-  strokeWeight(15)
-  line(X - 20, Y - 20, X + 20, Y + 20)
-  line(X - 20, Y + 20, X + 20, Y - 20)
-
-  pop()
+ pop()
 }
 
 
+function rightDrawX(X, Y, REyeHeight) {
+ push()
+// console.log("hello");
+ strokeWeight(15)
+ stroke(11);
+fill(255);
+ellipse(X, Y, 100, 60+ (REyeHeight))
+fill(255,0,0)
+ellipse(X, Y, 50, 50)
+ pop()
+}
 // This function draw's a dot on all the keypoints. It can be passed a whole face, or part of one. 
-function drawPoints(feature) {
+//function drawPoints(feature) {
 
-  push()
-  for (let i = 0; i < feature.keypoints.length; i++) {
-    let element = feature.keypoints[i];
-    noStroke();
-    fill(0, 255, 0);
-    circle(element.x, element.y, 5);
-  }
-  pop()
+  //push()
+ // for (let i = 0; i < feature.keypoints.length; i++) {
+//    let element = feature.keypoints[i];
+  //  noStroke();
+//    fill(0, 255, 0);
+//    circle(testx, , 5);
+//  }
+//  pop()
 
-}
+//}

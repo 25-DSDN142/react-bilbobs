@@ -28,7 +28,7 @@ function drawInteraction(faces, hands) {
     fill(225, 225, 0);
     ellipse(indexFingerTipX, indexFingerTipY, 30, 30);
 
-    // drawPoints(hand)
+    //drawPoints(hand)
 
     //fingerPuppet(indexFingerTipX, indexFingerTipY);
 
@@ -127,7 +127,7 @@ function drawPoints(feature) {
     let element = feature.keypoints[i];
     noStroke();
     fill(0, 255, 0);
-    circle(element.x, element.y, 10);
+    circle(element.x, element.y, 100);
   }
   pop()
 
