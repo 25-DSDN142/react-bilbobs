@@ -88,9 +88,12 @@ function drawInteraction(faces, hands) {
 
   let REyeHeight = face.rightEye.height;
   let LEyeHeight = face.leftEye.height;
+let cellSize = 250;
+let two_scale_factor = 1.2; // scale for the background eye
+let shadowCover_two = two_scale_factor*1.12
 
-  leftDrawX(face.leftEye.centerX, face.leftEye.centerY, LEyeHeight);
-  rightDrawX(face.rightEye.centerX, face.rightEye.centerY, REyeHeight);
+  leftDrawX(face.leftEye.centerX, face.leftEye.centerY, LEyeHeight, two_scale_factor, cellSize, shadowCover_two);
+  rightDrawX(face.rightEye.centerX, face.rightEye.centerY, REyeHeight, two_scale_factor, cellSize, shadowCover_two);
 
     // drawX(noseTipX,noseTipY); 
 
@@ -121,27 +124,69 @@ function drawInteraction(faces, hands) {
   // You can make addtional elements here, but keep the face drawing inside the for loop. 
 }
 
-function leftDrawX(X, Y, LEyeHeight) {
+function leftDrawX(X, Y, LEyeHeight, two_scale_factor, cellSize, shadowCover_two) {
  push()
+
+ X = X+5
 // console.log("hello");
- strokeWeight(15)
- stroke(11);
-fill(255);
-ellipse(X, Y, 100, 60+ (LEyeHeight))
-fill(255,0,0)
-ellipse(X, Y, 50, 50 )
+//EYEBALL
+noStroke();
+// white eye
+fill(255); 
+  ellipse(X, Y+10, two_scale_factor*90, two_scale_factor*LEyeHeight*5); 
+
+// eye colour. statements
+  fill(242, 101, 41); 
+ellipse(X, (Y + (200*1/10*two_scale_factor)), two_scale_factor*67.5, two_scale_factor*LEyeHeight*3);
+
+
+fill(34,13,32); //black pupil
+ellipse(X, (Y + (200*1/10*two_scale_factor)), two_scale_factor*40, LEyeHeight*2);
+
+//EYELID
+
+//eyelid colour statements
+
+  fill(255,204,0);
+beginShape();
+  vertex(0, 0); 
+  vertex(
+    X + (200 * -1/4 * two_scale_factor), 
+    Y + (LEyeHeight*10 *  0  * two_scale_factor)
+  );
+  bezierVertex(
+    X + (200 * -1/4 * two_scale_factor), 
+    Y + (LEyeHeight*10 * -7/20 * two_scale_factor), 
+    X + (200 *  1/4 * two_scale_factor), 
+    Y + (LEyeHeight*10 * -7/20 * two_scale_factor), 
+    X + (200 *  1/4 * two_scale_factor), 
+    Y + (LEyeHeight*10 *  0  * two_scale_factor)
+  );
+vertex(
+  X + (200 *  1/4 * two_scale_factor), 
+  Y + (LEyeHeight*10 *  0  * two_scale_factor)
+);
+bezierVertex(
+    X + (200 * 1/4 * two_scale_factor), 
+    Y + (LEyeHeight*10 * 3/20 * two_scale_factor), 
+    X + (200 *  -1/4 * two_scale_factor), 
+    Y + (LEyeHeight*10 * 3/20 * two_scale_factor), 
+    X + (200 *  -1/4 * two_scale_factor), 
+    Y + (LEyeHeight*10 *  0  * two_scale_factor)
+  );
+  endShape(CLOSE);
 
  pop()
 }
 
 
-function rightDrawX(X, Y, REyeHeight) {
+function rightDrawX(X, Y, REyeHeight, two_scale_factor, cellSize) {
  push()
 // console.log("hello");
  strokeWeight(15)
  stroke(11);
 fill(255);
-ellipse(X, Y, 100, 60+ (REyeHeight))
+ellipse(X, Y, 100, (REyeHeight*4))
 fill(255,0,0)
 ellipse(X, Y, 50, 50)
  pop()
