@@ -1,10 +1,59 @@
-// ----=  Faces  =----
-/* load images here */
+let faceScale = 1.0
+let eyeColour = { r: 242, g: 200, b: 41 };
+let skinColour = { r: 255, g: 204, b: 0 };
+let pinchEye = 0
+let pinchSkin = 0
+
+
 function prepareInteraction() {
   //bgImage = loadImage('/images/background.png');
 }
 
 function drawInteraction(faces, hands) {
+
+  for (let i = 0; i < hands.length; i++) {
+    let hand = hands[i];
+
+if (hand.handedness === "Left") {
+
+    let indexFingerTipX = hand.index_finger_tip.x;
+    let indexFingerTipY = hand.index_finger_tip.y;
+    let thumbTipX = hand.thumb_tip.x;
+    let thumbTipY = hand.thumb_tip.y;
+    let ringFingerTipX = hand.ring_finger_tip.x;
+    let ringFingerTipY = hand.ring_finger_tip.y;
+    
+    let skinDist = dist(ringFingerTipX, ringFingerTipY, thumbTipX, thumbTipY);
+    let eyeDist = dist(indexFingerTipX, indexFingerTipY, thumbTipX, thumbTipY);
+    
+    pinchEye = eyeDist;
+    pinchSkin = skinDist;
+
+    // SKIN COLOR - Ring finger + thumb pinch
+    if (skinDist < 600) {
+      
+      skinColour.r = map(skinDist, 20, 600, 150, 220);
+      skinColour.g = map(skinDist, 20, 600, 255, 200);
+      skinColour.b = map(skinDist, 20, 600, 180, 100);
+
+    
+      fill(skinColour.r,skinColour.g, skinColour.b )
+      ellipse(ringFingerTipX, ringFingerTipY, 50, 50)
+    }
+
+    // EYE COLOR - Index finger + thumb pinch
+    if (eyeDist < 600) {
+      eyeColour.r = map(eyeDist, 20, 600, 0, 255);
+      eyeColour.g = map(eyeDist, 20, 600, 255, 100);
+      eyeColour.b = map(eyeDist, 20, 600, 150, 255);
+
+    fill(eyeColour.r,eyeColour.g, eyeColour.b )
+    ellipse(indexFingerTipX, indexFingerTipY, 50, 50)
+    }
+  }
+}
+
+
 
   // for loop to capture if there is more than one face on the screen. This applies the same process to all faces. 
   for (let i = 0; i < faces.length; i++) {
@@ -13,6 +62,10 @@ function drawInteraction(faces, hands) {
     if (showKeypoints) {
       drawPoints(face)
     }
+
+
+  
+
 
     /*
     Once this program has a face, it knows some things about it.
@@ -62,39 +115,35 @@ function drawInteraction(faces, hands) {
     let noseTipX = face.keypoints[4].x;
     let noseTipY = face.keypoints[4].y;
 
-    let testx = face.keypoints[4].x;
-    let testy = face.keypoints[4].y;
-    /*
-    Start drawing on the face here
-    */
-    noStroke()
-    fill(225, 225, 0);
-    // fill(get(leftEyeCenterX, leftEyeCenterY))
+    let topLipX = face.keypoints[0].x;
+      let topLipY = face.keypoints[0].y;
+    let bottomLipX = face.keypoints[17].x;
+    let bottomLipY = face.keypoints[17].y;
+    let cornerLX = face.keypoints[61].x;
+    let cornerLY = face.keypoints[61].y;
+    let cornerRX = face.keypoints[291].x;
+    let cornerRY = face.keypoints[291].y;
 
-    //ellipse(leftEyeCenterX, leftEyeCenterY, leftEyeWidth, leftEyeHeight);
-
-    //drawPoints(face.leftEye);
-    //drawPoints(face.leftEyebrow);
-    //drawPoints(face.lips);
-    //drawPoints(face.rightEye);
-    //drawPoints(face.rightEyebrow);
-
-  //drawX(rightEyeCenterX,rightEyeCenterY);
-  //drawX(leftEyeCenterX,leftEyeCenterY);
-
-
-// REyeHeight(face.rightEye.height);
-// LEyeHeight(face.leftEye.height);
 
   let REyeHeight = face.rightEye.height;
   let LEyeHeight = face.leftEye.height;
-let cellSize = 250;
-let two_scale_factor = 1.2; // scale for the background eye
-let shadowCover_two = two_scale_factor*1.12
+  let cellSize = 250;
+  let two_scale_factor = 1.7; // scale for the background eye
+  let shadowCover_two = two_scale_factor*1.12
+  let x = face.lips.centerX;
+  let y = face.lips.centerY;
+  let w = 200; // width of lips
+  let h = 40;  // height of lips
+
+
+  let toothWidth = 30;
+  let toothHeight = 45;
+  let gap = 8; // gap between teeth
+
 
   leftDrawX(face.leftEye.centerX, face.leftEye.centerY, LEyeHeight, two_scale_factor, cellSize, shadowCover_two);
   rightDrawX(face.rightEye.centerX, face.rightEye.centerY, REyeHeight, two_scale_factor, cellSize, shadowCover_two);
-
+  mouthDrawX(x,y,face.lips.width,face.lips.height, w, h, topLipX, topLipY, bottomLipX, bottomLipY, two_scale_factor, noseTipX, noseTipY, cornerLX, cornerLY, cornerRX, cornerRY)
     // drawX(noseTipX,noseTipY); 
 
 
@@ -109,22 +158,7 @@ let shadowCover_two = two_scale_factor*1.12
 
 
 
-
-
-    // drawX(face.keypoints[332].x,face.keypoints[332].y);
-    // drawX(face.keypoints[103].x,face.keypoints[103].y);
-
-
-    /*
-    Stop drawing on the face here
-    */
-
-  }
-  //------------------------------------------------------
-  // You can make addtional elements here, but keep the face drawing inside the for loop. 
-}
-
-function leftDrawX(X, Y, LEyeHeight, two_scale_factor, cellSize, shadowCover_two) {
+function leftDrawX(X, Y, LEyeHeight, two_scale_factor, cellSize, shadowCover_two, d) {
  push()
 
  X = X+5
@@ -136,43 +170,43 @@ fill(255);
   ellipse(X, Y+10, two_scale_factor*90, two_scale_factor*LEyeHeight*5); 
 
 // eye colour. statements
-  fill(242, 101, 41); 
+  fill(eyeColour.r, eyeColour.g, eyeColour.b); 
 ellipse(X, (Y + (200*1/10*two_scale_factor)), two_scale_factor*67.5, two_scale_factor*LEyeHeight*3);
 
 
 fill(34,13,32); //black pupil
-ellipse(X, (Y + (200*1/10*two_scale_factor)), two_scale_factor*40, LEyeHeight*2);
+ellipse(X, (Y + (200*1/10*two_scale_factor)), (50+(LEyeHeight*-1)),(60+(LEyeHeight*-1)));
 
 //EYELID
 
 //eyelid colour statements
 
-  fill(255,204,0);
+  fill(skinColour.r,skinColour.g, skinColour.b);
 beginShape();
   vertex(0, 0); 
   vertex(
     X + (200 * -1/4 * two_scale_factor), 
-    Y + (LEyeHeight*10 *  0  * two_scale_factor)
+  Y+LEyeHeight*-5+60 +(200 *  0  * two_scale_factor+LEyeHeight)
   );
   bezierVertex(
     X + (200 * -1/4 * two_scale_factor), 
-    Y + (LEyeHeight*10 * -7/20 * two_scale_factor), 
+Y+LEyeHeight*-5+60 +(200 * -7/20 * two_scale_factor+LEyeHeight), 
     X + (200 *  1/4 * two_scale_factor), 
-    Y + (LEyeHeight*10 * -7/20 * two_scale_factor), 
+Y+LEyeHeight*-5+60 +(200 * -7/20 * two_scale_factor+LEyeHeight), 
     X + (200 *  1/4 * two_scale_factor), 
-    Y + (LEyeHeight*10 *  0  * two_scale_factor)
+Y+LEyeHeight*-5+60 +(200 *  0  * two_scale_factor+LEyeHeight)
   );
 vertex(
   X + (200 *  1/4 * two_scale_factor), 
-  Y + (LEyeHeight*10 *  0  * two_scale_factor)
+Y+LEyeHeight*-5+60 +(200 *  0  * two_scale_factor+LEyeHeight)
 );
 bezierVertex(
     X + (200 * 1/4 * two_scale_factor), 
-    Y + (LEyeHeight*10 * 3/20 * two_scale_factor), 
+Y+LEyeHeight*-5+60 +(200 * 3/20 * two_scale_factor+LEyeHeight), 
     X + (200 *  -1/4 * two_scale_factor), 
-    Y + (LEyeHeight*10 * 3/20 * two_scale_factor), 
+Y+LEyeHeight*-5+60 +(200 * 3/20 * two_scale_factor+LEyeHeight), 
     X + (200 *  -1/4 * two_scale_factor), 
-    Y + (LEyeHeight*10 *  0  * two_scale_factor)
+Y+LEyeHeight*-5+60 +(200 *  0  * two_scale_factor+LEyeHeight)
   );
   endShape(CLOSE);
 
@@ -180,27 +214,132 @@ bezierVertex(
 }
 
 
-function rightDrawX(X, Y, REyeHeight, two_scale_factor, cellSize) {
+function rightDrawX(X, Y, REyeHeight, two_scale_factor, cellSize, d) {
  push()
 // console.log("hello");
- strokeWeight(15)
- stroke(11);
-fill(255);
-ellipse(X, Y, 100, (REyeHeight*4))
-fill(255,0,0)
-ellipse(X, Y, 50, 50)
+ X = X+5
+// console.log("hello");
+//EYEBALL
+noStroke();
+// white eye
+fill(255); 
+  ellipse(X, Y+10, two_scale_factor*90, two_scale_factor*REyeHeight*5); 
+
+// eye colour. statements
+  fill(eyeColour.r,eyeColour.g, eyeColour.b)
+ellipse(X, (Y + (200*1/10*two_scale_factor)), two_scale_factor*67.5, two_scale_factor*REyeHeight*3);
+
+
+fill(34,13,32); //black pupil
+ellipse(X, (Y + (200*1/10*two_scale_factor)), (50+(REyeHeight*-1)),(60+(REyeHeight*-1)));
+
+//EYELID
+
+//eyelid colour statements
+
+  fill(skinColour.r,skinColour.g, skinColour.b);
+beginShape();
+  vertex(0, 0); 
+  vertex(
+    X + (200 * -1/4 * two_scale_factor), 
+  Y+REyeHeight*-5+60 +(200 *  0  * two_scale_factor+REyeHeight)
+  );
+  bezierVertex(
+    X + (200 * -1/4 * two_scale_factor), 
+Y+REyeHeight*-5+60 +(200 * -7/20 * two_scale_factor+REyeHeight), 
+    X + (200 *  1/4 * two_scale_factor), 
+Y+REyeHeight*-5+60 +(200 * -7/20 * two_scale_factor+REyeHeight), 
+    X + (200 *  1/4 * two_scale_factor), 
+Y+REyeHeight*-5+60 +(200 *  0  * two_scale_factor+REyeHeight)
+  );
+vertex(
+  X + (200 *  1/4 * two_scale_factor), 
+Y+REyeHeight*-5+60 +(200 *  0  * two_scale_factor+REyeHeight)
+);
+bezierVertex(
+    X + (200 * 1/4 * two_scale_factor), 
+Y+REyeHeight*-5+60 +(200 * 3/20 * two_scale_factor+REyeHeight), 
+    X + (200 *  -1/4 * two_scale_factor), 
+Y+REyeHeight*-5+60 +(200 * 3/20 * two_scale_factor+REyeHeight), 
+    X + (200 *  -1/4 * two_scale_factor), 
+Y+REyeHeight*-5+60 +(200 *  0  * two_scale_factor+REyeHeight)
+  );
+  endShape(CLOSE);
  pop()
 }
-// This function draw's a dot on all the keypoints. It can be passed a whole face, or part of one. 
-//function drawPoints(feature) {
 
-  //push()
- // for (let i = 0; i < feature.keypoints.length; i++) {
-//    let element = feature.keypoints[i];
-  //  noStroke();
-//    fill(0, 255, 0);
-//    circle(testx, , 5);
-//  }
-//  pop()
+function mouthDrawX(x, y, mouthWidth, mouthHeight, w, h, topLipX, topLipY, bottomLipX, bottomLipY, two_scale_factor, noseTipX, noseTipY, mRX, mRY, mLX, mLY) {
+  push();
+  noStroke();
+  fill(skinColour.r,skinColour.g, skinColour.b);
+  
+  // TOP LIP
+  beginShape();
+  // Left corner - use mRY for actual mouth corner position
+  vertex(topLipX - mouthWidth/2, mRY);
+  
+  // Left curve - rises up to cupid's bow
+  bezierVertex(
+    topLipX - mouthWidth/3, topLipY - h * 0.6,
+    topLipX - mouthWidth/6, topLipY - h * 0.8,
+    topLipX - mouthWidth/12, topLipY - h * 0.5
+  );
+  
+  // Cupid's bow dip
+  bezierVertex(
+    topLipX - mouthWidth/20, topLipY - h * 0.3,
+    topLipX + mouthWidth/20, topLipY - h * 0.3,
+    topLipX + mouthWidth/12, topLipY - h * 0.5
+  );
+  
+  // Right curve - descends from cupid's bow
+  bezierVertex(
+    topLipX + mouthWidth/6, topLipY - h * 0.8,
+    topLipX + mouthWidth/3, topLipY - h * 0.6,
+    topLipX + mouthWidth/2, mLY  // Right corner
+  );
+  
+  // Bottom edge (meeting line) - back to left corner
+  bezierVertex(
+    topLipX + mouthWidth/3, topLipY + h * 0.15,
+    topLipX - mouthWidth/3, topLipY + h * 0.15,
+    topLipX - mouthWidth/2, mRY  // Back to left corner
+  );
+  
+  endShape(CLOSE);
 
-//}
+  // BOTTOM LIP
+  beginShape();
+  // Left corner - use mRY to match top lip
+  vertex(bottomLipX - mouthWidth/2, mRY);
+  
+  // Bottom left curve
+  bezierVertex(
+    bottomLipX - mouthWidth/3, bottomLipY + h * 0.8,
+    bottomLipX - mouthWidth/6, bottomLipY + h,
+    bottomLipX, bottomLipY + h * 0.9
+  );
+  
+  // Bottom right curve
+  bezierVertex(
+    bottomLipX + mouthWidth/6, bottomLipY + h,
+    bottomLipX + mouthWidth/3, bottomLipY + h * 0.8,
+    bottomLipX + mouthWidth/2, mLY  // Right corner
+  );
+  
+  // Top edge (meeting line) - back to left corner
+  bezierVertex(
+    bottomLipX + mouthWidth/3, bottomLipY + h * 0.15,
+    bottomLipX - mouthWidth/3, bottomLipY + h * 0.15,
+    bottomLipX - mouthWidth/2, mRY  // Back to left corner
+  );
+  
+  endShape(CLOSE);
+  
+  pop();
+}
+  
+  }
+  
+}
+
