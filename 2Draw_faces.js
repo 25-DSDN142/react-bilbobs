@@ -1,12 +1,21 @@
-let faceScale = 1.0
+let faceScale = 0.5
 let eyeColour = { r: 242, g: 200, b: 41 };
 let skinColour = { r: 255, g: 204, b: 0 };
 let pinchEye = 0
 let pinchSkin = 0
 
+let firstRun = true;
+let nycCapImage;
+let prettyCapImage;
+let wigImage;
+
+imageMode(CENTER);
 
 function prepareInteraction() {
-  //bgImage = loadImage('/images/background.png');
+nycCapImage = loadImage('CAP.png');
+prettyCapImage = loadImage('PRETTY.png');
+wigImage = loadImage('WIG.png');
+
 }
 
 function drawInteraction(faces, hands) {
@@ -23,6 +32,7 @@ if (hand.handedness === "Left") {
     let ringFingerTipX = hand.ring_finger_tip.x;
     let ringFingerTipY = hand.ring_finger_tip.y;
     
+    
     let skinDist = dist(ringFingerTipX, ringFingerTipY, thumbTipX, thumbTipY);
     let eyeDist = dist(indexFingerTipX, indexFingerTipY, thumbTipX, thumbTipY);
     
@@ -32,27 +42,52 @@ if (hand.handedness === "Left") {
     // SKIN COLOR - Ring finger + thumb pinch
     if (skinDist < 600) {
       
-      skinColour.r = map(skinDist, 20, 600, 150, 220);
-      skinColour.g = map(skinDist, 20, 600, 255, 200);
-      skinColour.b = map(skinDist, 20, 600, 180, 100);
+      skinColour.r = map(skinDist, 20, 600, 0, 255);
+      skinColour.g = map(skinDist, 20, 600, 255, 150);
+      skinColour.b = map(skinDist, 20, 600, 255, 0);
 
-    
+  noStroke();
       fill(skinColour.r,skinColour.g, skinColour.b )
       ellipse(ringFingerTipX, ringFingerTipY, 50, 50)
     }
 
     // EYE COLOR - Index finger + thumb pinch
-    if (eyeDist < 600) {
-      eyeColour.r = map(eyeDist, 20, 600, 0, 255);
-      eyeColour.g = map(eyeDist, 20, 600, 255, 100);
-      eyeColour.b = map(eyeDist, 20, 600, 150, 255);
-
+    if (eyeDist < 700) {
+      eyeColour.r = map(eyeDist, 20, 700, 0, 255);
+      eyeColour.g = map(eyeDist, 20, 700, 255, 100);
+      eyeColour.b = map(eyeDist, 20, 700, 150, 255);
+noStroke();
     fill(eyeColour.r,eyeColour.g, eyeColour.b )
     ellipse(indexFingerTipX, indexFingerTipY, 50, 50)
     }
   }
+if (hand.handedness === "Right") {
+
+let indexFingerTipX = hand.index_finger_tip.x;
+let indexFingerTipY = hand.index_finger_tip.y;
+let middleFingerTipX = hand.middle_finger_tip.x;
+let middleFingerTipY = hand.middle_finger_tip.y;
+let pinkyFingerTipX = hand.pinky_finger_tip.x;
+let pinkyFingerTipY = hand.pinky_finger_tip.y;
+let thumbTipX = hand.thumb_tip.x;
+let thumbTipY = hand.thumb_tip.y;
+
+wigDist = dist(indexFingerTipX,indexFingerTipY, thumbTipX, thumbTipY)
+nycHatDist = dist(middleFingerTipX, middleFingerTipY, thumbTipX, thumbTipY);
+prettyHatDist = dist(pinkyFingerTipX, pinkyFingerTipY, thumbTipX, thumbTipY);
+
+if (nycHatDist<60){
+image(nycCapImage, thumbTipX -200, thumbTipY - 200);
+}    
+if (prettyHatDist<60){
+image(prettyCapImage, thumbTipX -200, thumbTipY - 200);
+}
+if (wigDist<60){
+image(wigImage, thumbTipX -200, thumbTipY - 200);
 }
 
+}
+}
 
 
   // for loop to capture if there is more than one face on the screen. This applies the same process to all faces. 
@@ -116,7 +151,7 @@ if (hand.handedness === "Left") {
     let noseTipY = face.keypoints[4].y;
 
     let topLipX = face.keypoints[0].x;
-      let topLipY = face.keypoints[0].y;
+    let topLipY = face.keypoints[0].y;
     let bottomLipX = face.keypoints[17].x;
     let bottomLipY = face.keypoints[17].y;
     let cornerLX = face.keypoints[61].x;
@@ -128,12 +163,12 @@ if (hand.handedness === "Left") {
   let REyeHeight = face.rightEye.height;
   let LEyeHeight = face.leftEye.height;
   let cellSize = 250;
-  let two_scale_factor = 1.7; // scale for the background eye
+  let two_scale_factor = 1.5; // scale for the background eye
   let shadowCover_two = two_scale_factor*1.12
   let x = face.lips.centerX;
   let y = face.lips.centerY;
-  let w = 200; // width of lips
-  let h = 40;  // height of lips
+  let w = 250; // width of lips
+  let h = 60;  // height of lips
 
 
   let toothWidth = 30;
@@ -162,7 +197,7 @@ function leftDrawX(X, Y, LEyeHeight, two_scale_factor, cellSize, shadowCover_two
  push()
 
  X = X+5
-// console.log("hello");
+
 //EYEBALL
 noStroke();
 // white eye
@@ -271,6 +306,26 @@ Y+REyeHeight*-5+60 +(200 *  0  * two_scale_factor+REyeHeight)
 function mouthDrawX(x, y, mouthWidth, mouthHeight, w, h, topLipX, topLipY, bottomLipX, bottomLipY, two_scale_factor, noseTipX, noseTipY, mRX, mRY, mLX, mLY) {
   push();
   noStroke();
+
+  fill(86,24,24);
+ // MIDDLE FILL - fills the gap between lips
+  beginShape();
+  // Top edge (follows top lip's bottom edge)
+  vertex(topLipX - mouthWidth/2, mRY);
+  bezierVertex(
+    topLipX - mouthWidth/3, topLipY + h * 0.15,
+    topLipX + mouthWidth/3, topLipY + h * 0.15,
+    topLipX + mouthWidth/2, mLY
+  );
+  
+  // Bottom edge (follows bottom lip's top edge)
+  bezierVertex(
+    bottomLipX + mouthWidth/3, bottomLipY + h * 0.15,
+    bottomLipX - mouthWidth/3, bottomLipY + h * 0.15,
+    bottomLipX - mouthWidth/2, mRY
+  );
+  endShape(CLOSE);
+
   fill(skinColour.r,skinColour.g, skinColour.b);
   
   // TOP LIP

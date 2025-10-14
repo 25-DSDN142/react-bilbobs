@@ -16,10 +16,10 @@ let Yvalue = 0
 
 function drawInteraction(faces, hands) {
   colors = [
-    color(255, 18, 18), // red 
-    color(38, 18, 255), // blue 
-    color(42, 255, 18), // green
-    color(255, 176, 18), // orange
+    (255, 18, 18), // red 
+    (38, 18, 255), // blue 
+    (42, 255, 18), // green
+    (255, 176, 18), // orange
 
   ];
 
